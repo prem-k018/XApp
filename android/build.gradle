@@ -10,6 +10,7 @@ buildscript {
     repositories {
         google()
         mavenCentral()
+        maven { url 'https://www.jitpack.io' }
     }
     dependencies {
         classpath("com.android.tools.build:gradle")
@@ -19,3 +20,20 @@ buildscript {
 }
 
 apply plugin: "com.facebook.react.rootproject"
+
+// Ensure local bundled tsbackgroundfetch maven repo is visible to all projects
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url 'https://www.jitpack.io' }
+        maven { url("${rootDir}/../node_modules/react-native-background-fetch/android/libs") }
+    }
+    configurations.all { config ->
+        resolutionStrategy.eachDependency { details ->
+            if (details.requested.group == 'com.transistorsoft' && details.requested.name == 'tsbackgroundfetch') {
+                details.useVersion '1.0.4'
+            }
+        }
+    }
+}
