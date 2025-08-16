@@ -1,36 +1,45 @@
-import {CommonActions, NavigationContainerRef} from '@react-navigation/native';
-import React from 'react';
+import {
+  CommonActions,
+  createNavigationContainerRef,
+} from '@react-navigation/native';
 
-type RootStackParamList = {
-  // Define your stack screens here
-  Login: undefined;
-  // Add other screens as needed
-};
+export const navigationRef = createNavigationContainerRef<any>();
 
-class NavigationService {
-  private static navigationRef: React.RefObject<
-    NavigationContainerRef<RootStackParamList>
-  > = React.createRef();
+let queuedState: any | null = null;
 
-  static setTopLevelNavigator(
-    ref: React.RefObject<NavigationContainerRef<RootStackParamList>>,
-  ) {
-    if (ref) {
-      this.navigationRef = ref;
-    }
-  }
+export function setTopLevelNavigator(_ref: any) {
+  // backward compatibility no-op
+}
 
-  static navigate(routeName: keyof RootStackParamList, params?: any) {
-    if (this.navigationRef.current) {
-      this.navigationRef.current.navigate(routeName, params);
-    }
-  }
-
-  static reset(state: {index: number; routes: {name: string}[]}) {
-    if (this.navigationRef.current) {
-      this.navigationRef.current.dispatch(CommonActions.reset(state));
-    }
+export function reset(state: any) {
+  if (navigationRef.isReady()) {
+    navigationRef.dispatch(CommonActions.reset(state));
+  } else {
+    queuedState = state;
   }
 }
+
+export function resetTo(routeName: string, params?: any) {
+  reset({
+    index: 0,
+    routes: [{name: routeName, params}],
+  });
+}
+
+export function onNavReady() {
+  if (queuedState && navigationRef.isReady()) {
+    navigationRef.dispatch(CommonActions.reset(queuedState));
+    queuedState = null;
+  }
+}
+
+// Backward‑compatibility default export (object with same API)
+const NavigationService = {
+  reset,
+  resetTo,
+  setTopLevelNavigator,
+  onNavReady,
+  navigationRef,
+};
 
 export default NavigationService;

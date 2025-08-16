@@ -1,18 +1,15 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react/no-unstable-nested-components */
 import {
-  BottomTabScreenProps,
   createBottomTabNavigator,
 } from '@react-navigation/bottom-tabs';
 import {
-  DarkTheme,
   DefaultTheme,
   NavigationContainer,
-  NavigationContainerRef,
 } from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {Image, Text, View, useColorScheme} from 'react-native';
-import React, {useEffect, useRef} from 'react';
+import {Image, useColorScheme} from 'react-native';
+import React, {JSX, useEffect} from 'react';
 import {icons} from '@app/assets/icons';
 import {tabNames, theme} from '@app/constants';
 import {TabBarIconPropsType} from './types';
@@ -30,7 +27,11 @@ import SplashScreen from '@app/screens/splash/splashScreen';
 import {useAppContext} from '@app/store/appContext';
 import ReelsScreens from '@app/screens/reels/reelsScreens';
 import Header from '@app/components/homeScreenHeader/Header';
-import NavigationService from './navigationService';
+import {
+  navigationRef,
+  onNavReady,
+  setTopLevelNavigator,
+} from '@app/navigators/navigationService';
 import EventDetails from '@app/screens/eventDetails/eventDetails';
 import WebViewHomeScreen from '@app/screens/webView/webViewHomeScreen';
 import QuizAnswerScreen from '@app/screens/quiz/quizAnswerScreen';
@@ -59,60 +60,58 @@ const RenderTabBarIcon = ({
   focused,
   route,
 }: TabBarIconPropsType): JSX.Element => {
-  let iconName;
-  let tabLabel;
   const {appConfigData} = useAppContext();
-
+  let iconSource;
   switch (route?.name) {
     case tabNames.discoverTab:
-      iconName = icons.homeTab;
-      tabLabel = appConfigData?.tabs[0].tabLabel;
+      iconSource = icons.homeTab;
       break;
     case tabNames.shopTab:
-      iconName = icons.search;
-      tabLabel = appConfigData?.tabs[1].tabLabel;
+      iconSource = icons.search;
       break;
     case tabNames.storesTab:
-      iconName = icons.store_inactive;
-      tabLabel = appConfigData?.tabs[2].tabLabel;
+      iconSource = icons.store_inactive;
       break;
     case tabNames.orderTab:
-      iconName = icons.order_inactive;
-      tabLabel = appConfigData?.tabs[3].tabLabel;
+      iconSource = icons.order_inactive;
       break;
     case tabNames.accountTab:
-      iconName = icons.account_inactive;
-      tabLabel = appConfigData?.tabs[4].tabLabel;
+      iconSource = icons.account_inactive;
       break;
     default:
-      break;
+      iconSource = undefined;
   }
   return (
     <>
-      <View style={{width: 24, height: 24, alignItems: 'center'}}>
+      {iconSource && (
         <Image
-          source={iconName}
+          source={iconSource}
           style={{
+            width: 22,
+            height: 22,
             tintColor: focused
               ? appConfigData?.primary_color
               : appConfigData?.secondary_color,
+            resizeMode: 'contain',
           }}
         />
-      </View>
-      <Text
-        style={{
-          fontFamily: theme.fonts.DMSans.medium,
-          fontSize: theme.fontSize.font10,
-          color: focused
-            ? appConfigData?.primary_color
-            : appConfigData?.secondary_color,
-          textAlign: 'center',
-        }}>
-        {tabLabel?.toUpperCase()}
-      </Text>
+      )}
     </>
   );
 };
+
+// Helper to derive label (was previously in switch)
+function getTabLabel(name: string, appConfigData: any) {
+  const map: Record<string, number> = {
+    [tabNames.discoverTab]: 0,
+    [tabNames.shopTab]: 1,
+    [tabNames.storesTab]: 2,
+    [tabNames.orderTab]: 3,
+    [tabNames.accountTab]: 4,
+  };
+  const idx = map[name];
+  return appConfigData?.tabs?.[idx]?.tabLabel ?? '';
+}
 
 const AccountTabStack = (): JSX.Element => {
   const {Navigator, Screen} = createNativeStackNavigator();
@@ -125,9 +124,9 @@ const AccountTabStack = (): JSX.Element => {
         name={tabName}
         component={AccountHomeScreen}
         options={{
-          headerTitle: () => <Header />,
+          header: () => <Header />,
+          headerShown: true,
           headerStyle: {backgroundColor: appConfigData?.header_color},
-          headerShadowVisible: false,
         }}
       />
     </Navigator>
@@ -145,9 +144,9 @@ const StoresTabStack = (): JSX.Element => {
         name={tabName}
         component={StoresHomeScreen}
         options={{
-          headerTitle: () => <Header />,
+          header: () => <Header />,
+          headerShown: true,
           headerStyle: {backgroundColor: appConfigData?.header_color},
-          headerShadowVisible: false,
         }}
       />
     </Navigator>
@@ -165,9 +164,9 @@ const OrderTabStack = (): JSX.Element => {
         name={tabName}
         component={OrderHomeScreen}
         options={{
-          headerTitle: () => <Header />,
+          header: () => <Header />,
+          headerShown: true,
           headerStyle: {backgroundColor: appConfigData?.header_color},
-          headerShadowVisible: false,
         }}
       />
     </Navigator>
@@ -180,14 +179,14 @@ const HomeTabStack = (): JSX.Element => {
   const {appConfigData} = useAppContext();
 
   return (
-    <Navigator initialRouteName={ScreenNames.homeScreen}>
+    <Navigator>
       <Screen
         name={tabName}
         component={HomeScreen}
         options={{
-          headerTitle: () => <Header />,
+          header: () => <Header />,
+          headerShown: true,
           headerStyle: {backgroundColor: appConfigData?.header_color},
-          headerShadowVisible: false,
         }}
       />
     </Navigator>
@@ -205,9 +204,9 @@ const ShopTabStack = (): JSX.Element => {
         name={tabName}
         component={ShopHomeScreen}
         options={{
-          headerTitle: () => <Header />,
+          header: () => <Header />,
+          headerShown: true,
           headerStyle: {backgroundColor: appConfigData?.header_color},
-          headerShadowVisible: false,
         }}
       />
     </Navigator>
@@ -293,41 +292,43 @@ const HomeTab = (): JSX.Element => {
   const {Navigator, Screen} = createBottomTabNavigator();
   const {appConfigData} = useAppContext();
 
-  const tabNavProps = {
-    screenOptions: ({route}: BottomTabScreenProps<any>) => ({
-      headerShown: false,
-      tabBarHideOnKeyboard: true,
-
-      tabBarStyle: [
-        {
-          backgroundColor: appConfigData?.footer_color,
-          borderTopWidth: 0,
-        },
-      ],
-      tabBarLabel: () => null,
-      tabBarIcon: (tabBarIconProps: TabBarIconPropsType) =>
-        RenderTabBarIcon({...tabBarIconProps, route}),
-    }),
-  };
-
   return (
-    <Navigator {...tabNavProps}>
+    <Navigator
+      screenOptions={({route}) => {
+        const label = getTabLabel(route.name, appConfigData);
+        return {
+          headerShown: false,
+          tabBarHideOnKeyboard: true,
+          tabBarActiveTintColor: appConfigData?.primary_color,
+          tabBarInactiveTintColor: appConfigData?.secondary_color,
+          tabBarLabel: label ? label.toUpperCase() : '',
+          tabBarLabelStyle: {
+            fontFamily: theme.fonts.DMSans.medium,
+            fontSize: theme.fontSize.font10,
+          },
+          tabBarIcon: (p: any) => <RenderTabBarIcon {...p} route={route} />,
+          tabBarStyle: {
+            backgroundColor: appConfigData?.footer_color,
+            borderTopWidth: 0,
+          },
+          tabBarItemStyle: {
+            justifyContent: 'center',
+            alignItems: 'center',
+          },
+        };
+      }}>
       {CheckTabVisibility(tabNames.discoverTab) && (
         <Screen name={tabNames.discoverTab} component={HomeTabStack} />
       )}
-
       {CheckTabVisibility(tabNames.shopTab) && (
         <Screen name={tabNames.shopTab} component={ShopTabStack} />
       )}
-
       {CheckTabVisibility(tabNames.storesTab) && (
         <Screen name={tabNames.storesTab} component={StoresTabStack} />
       )}
-
       {CheckTabVisibility(tabNames.orderTab) && (
         <Screen name={tabNames.orderTab} component={OrderTabStack} />
       )}
-
       {CheckTabVisibility(tabNames.accountTab) && (
         <Screen name={tabNames.accountTab} component={AccountTabStack} />
       )}
@@ -335,11 +336,36 @@ const HomeTab = (): JSX.Element => {
   );
 };
 
-const CurrentNavigator = (): JSX.Element => {
-  const {Navigator, Screen} = createNativeStackNavigator();
+const RootContainer = () => {
+  const currentColorScheme = useColorScheme();
+  const currentTheme =
+    currentColorScheme === 'dark' ? DefaultTheme : DefaultTheme;
+
+  const deepLinkManager = DeepLinkManager.getInstance(navigationRef as any);
+
+  useEffect(() => {
+    setTopLevelNavigator(navigationRef);
+    initializeEnvironment();
+    deepLinkManager.initializeDeepLinks();
+    return () => deepLinkManager.removeDeepLinkListener();
+  }, []);
 
   return (
-    <Navigator>
+    <NavigationContainer
+      theme={currentTheme}
+      ref={navigationRef}
+      onReady={onNavReady}>
+      <RootStack />
+    </NavigationContainer>
+  );
+};
+
+// Define the flattened stack
+const RootStack = () => {
+  const {Navigator, Screen} = createNativeStackNavigator();
+  return (
+    <Navigator initialRouteName="Splash">
+      {/* Previously inside CurrentNavigator */}
       <Screen
         name="Splash"
         component={SplashStack}
@@ -353,173 +379,126 @@ const CurrentNavigator = (): JSX.Element => {
       <Screen
         name="Onboarding"
         component={OnboardingStack}
-        options={{headerShown: false, headerBackVisible: false}}
+        options={{headerShown: false}}
       />
       <Screen
         name="Home"
         component={HomeTab}
+        options={{headerShown: false}}
+      />
+
+      <Screen
+        name={ScreenNames.articleDetails}
+        component={ArticleDetails}
+        options={{headerShown: false}}
+      />
+      <Screen
+        name={ScreenNames.eventDetails}
+        component={EventDetails}
+        options={{headerShown: false}}
+      />
+      <Screen name={ScreenNames.poll} component={Poll} options={{headerShown: false}} />
+      <Screen name={ScreenNames.quiz} component={Quiz} options={{headerShown: false}} />
+      <Screen
+        name={ScreenNames.quizAnswer}
+        component={QuizAnswerScreen}
+        options={{headerShown: false}}
+      />
+      <Screen
+        name={ScreenNames.reelsScreen}
+        component={ReelsScreens}
+        options={{headerShown: false}}
+      />
+      <Screen
+        name={ScreenNames.onboardingSecondScreen}
+        component={OnboardingSecondScreen}
+        options={{headerShown: false}}
+      />
+      <Screen
+        name={ScreenNames.storiesScreen}
+        component={StoriesScreens}
+        options={{headerShown: false}}
+      />
+      <Screen
+        name={ScreenNames.webViewHomeScreen}
+        component={WebViewHomeScreen}
         options={{
-          headerShown: false,
-          headerBackVisible: false,
+          headerShown: true,
+          autoHideHomeIndicator: true,
+          headerTitle: 'Community',
         }}
       />
+      <Screen
+        name={ScreenNames.categoryScreen}
+        component={CategoriesScreen}
+        options={{headerShown: false}}
+      />
+      <Screen
+        name={ScreenNames.productDetails}
+        component={ProductDetailsScreen}
+        options={{headerShown: false}}
+      />
+      <Screen
+        name={ScreenNames.cartHomeScreen}
+        component={CartHomeScreen}
+        options={{headerShown: false}}
+      />
+      <Screen
+        name={ScreenNames.addressScreen}
+        component={AddressScreen}
+        options={{headerShown: false}}
+      />
+      <Screen
+        name={ScreenNames.trailerVideoScreen}
+        component={TrailerVideoScreen}
+        options={{headerShown: false}}
+      />
+      <Screen
+        name={ScreenNames.environmentSetup}
+        component={EnvironmentSetup}
+        options={{headerShown: false}}
+      />
+      <Screen
+        name={ScreenNames.searchScreen}
+        component={SearchScreen}
+        options={{headerShown: false}}
+      />
+      <Screen
+        name={ScreenNames.userProfileScreen}
+        component={UserProfileScreen}
+        options={{headerShown: false}}
+      />
+      <Screen
+        name={ScreenNames.loyaltyProfileScreen}
+        component={LoyaltyProfileScreen}
+        options={{headerShown: false}}
+      />
+      <Screen
+        name={ScreenNames.editProfileScreen}
+        component={EditProfileScreen}
+        options={{headerShown: false}}
+      />
+      <Screen
+        name={ScreenNames.rewardsManagement}
+        component={RewardManagement}
+        options={{headerShown: false}}
+      />
+      <Screen
+        name={ScreenNames.shippingScreen}
+        component={ShippingScreen}
+        options={{headerShown: false}}
+      />
+      <Screen
+        name={ScreenNames.paymentScreen}
+        component={PaymentScreen}
+        options={{headerShown: false}}
+      />
+      <Screen
+        name={ScreenNames.orderConfirmedScreen}
+        component={OrderConfirmedScreen}
+        options={{headerShown: false}}
+      />
     </Navigator>
-  );
-};
-
-const RootContainer = () => {
-  const currentColorScheme = useColorScheme();
-  const currentTheme =
-    currentColorScheme === 'dark' ? DefaultTheme : DefaultTheme;
-  const {Navigator, Screen} = createNativeStackNavigator();
-
-  const navigationRef = useRef<NavigationContainerRef<any>>(null);
-  const deepLinkManager = DeepLinkManager.getInstance(navigationRef);
-  initializeEnvironment();
-
-  useEffect(() => {
-    // Initialize deep links
-    NavigationService.setTopLevelNavigator(navigationRef);
-    deepLinkManager.initializeDeepLinks();
-
-    return () => {
-      // Clean up deep link event listener
-      deepLinkManager.removeDeepLinkListener();
-    };
-  });
-
-  return (
-    <NavigationContainer theme={currentTheme} ref={navigationRef}>
-      <Navigator>
-        <Screen
-          name="Root"
-          component={CurrentNavigator}
-          options={{headerShown: false}}
-        />
-        <Screen
-          name={ScreenNames.articleDetails}
-          component={ArticleDetails}
-          options={{headerShown: false}}
-        />
-        <Screen
-          name={ScreenNames.eventDetails}
-          component={EventDetails}
-          options={{headerShown: false}}
-        />
-        <Screen
-          name={ScreenNames.poll}
-          component={Poll}
-          options={{headerShown: false}}
-        />
-        <Screen
-          name={ScreenNames.quiz}
-          component={Quiz}
-          options={{headerShown: false}}
-        />
-        <Screen
-          name={ScreenNames.quizAnswer}
-          component={QuizAnswerScreen}
-          options={{headerShown: false}}
-        />
-        <Screen
-          name={ScreenNames.reelsScreen}
-          component={ReelsScreens}
-          options={{headerShown: false}}
-        />
-        <Screen
-          name={ScreenNames.onboardingSecondScreen}
-          component={OnboardingSecondScreen}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Screen
-          name={ScreenNames.storiesScreen}
-          component={StoriesScreens}
-          options={{headerShown: false}}
-        />
-        <Screen
-          name={ScreenNames.webViewHomeScreen}
-          component={WebViewHomeScreen}
-          options={{
-            headerShown: true,
-            autoHideHomeIndicator: true,
-            headerTitle: 'Community',
-            headerBackTitleVisible: false,
-          }}
-        />
-        <Screen
-          name={ScreenNames.categoryScreen}
-          component={CategoriesScreen}
-          options={{headerShown: false}}
-        />
-        <Screen
-          name={ScreenNames.productDetails}
-          component={ProductDetailsScreen}
-          options={{headerShown: false}}
-        />
-        <Screen
-          name={ScreenNames.cartHomeScreen}
-          component={CartHomeScreen}
-          options={{headerShown: false}}
-        />
-        <Screen
-          name={ScreenNames.addressScreen}
-          component={AddressScreen}
-          options={{headerShown: false}}
-        />
-        <Screen
-          name={ScreenNames.trailerVideoScreen}
-          component={TrailerVideoScreen}
-          options={{headerShown: false}}
-        />
-        <Screen
-          name={ScreenNames.environmentSetup}
-          component={EnvironmentSetup}
-          options={{headerShown: false}}
-        />
-        <Screen
-          name={ScreenNames.searchScreen}
-          component={SearchScreen}
-          options={{headerShown: false}}
-        />
-        <Screen
-          name={ScreenNames.userProfileScreen}
-          component={UserProfileScreen}
-          options={{headerShown: false}}
-        />
-        <Screen
-          name={ScreenNames.loyaltyProfileScreen}
-          component={LoyaltyProfileScreen}
-          options={{headerShown: false}}
-        />
-        <Screen
-          name={ScreenNames.editProfileScreen}
-          component={EditProfileScreen}
-          options={{headerShown: false}}
-        />
-        <Screen
-          name={ScreenNames.rewardsManagement}
-          component={RewardManagement}
-          options={{headerShown: false}}
-        />
-        <Screen
-          name={ScreenNames.shippingScreen}
-          component={ShippingScreen}
-          options={{headerShown: false}}
-        />
-        <Screen
-          name={ScreenNames.paymentScreen}
-          component={PaymentScreen}
-          options={{headerShown: false}}
-        />
-        <Screen
-          name={ScreenNames.orderConfirmedScreen}
-          component={OrderConfirmedScreen}
-          options={{headerShown: false}}
-        />
-      </Navigator>
-    </NavigationContainer>
   );
 };
 
