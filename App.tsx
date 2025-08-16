@@ -2,7 +2,7 @@
  * App entry with BootSplash + Firebase Messaging + Notifee integration.
  */
 import React, {JSX, useCallback, useEffect, useState} from 'react';
-import {Platform} from 'react-native';
+import {Platform, StatusBar} from 'react-native';
 import RNBootSplash from 'react-native-bootsplash';
 import messaging from '@react-native-firebase/messaging';
 import notifee, {AndroidImportance} from '@notifee/react-native';
@@ -89,6 +89,11 @@ export default function App(): JSX.Element {
     <OrientationLocking>
       <AppProvider>
         <GestureHandlerRootView style={{flex: 1}}>
+          <StatusBar
+           translucent={false}              
+           backgroundColor="#000000"        
+           barStyle="dark-content"         
+         />
           <RootContainer />
           {message && <AnimatedNotification message={message} />}
         </GestureHandlerRootView>

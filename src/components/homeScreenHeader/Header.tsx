@@ -7,11 +7,12 @@ import {useAppContext} from '@app/store/appContext';
 import ScreenNames from '@app/constants/screenNames';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 const Header = () => {
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
-  const {appConfigData} = useAppContext();
-  const {cartItems} = useAppContext();
+  const {appConfigData, cartItems} = useAppContext();
+  const insets = useSafeAreaInsets();
 
   const handleShopIconPress = () => {
     navigation?.navigate(ScreenNames.cartHomeScreen);
@@ -19,29 +20,23 @@ const Header = () => {
   };
 
   const handleNotificationIconPress = () => {
-    // navigation?.navigate(ScreenNames.webViewHomeScreen, {
-    //   webUrl: 'https://discussion.hcl-x.com/portal/dologin',
-    // });
+    // navigation?.navigate(ScreenNames.webViewHomeScreen, { webUrl: 'https://discussion.hcl-x.com/portal/dologin' });
   };
 
   const styles = StyleSheet.create({
     container: {
-      flex: 1,
       flexDirection: 'row',
-      justifyContent: 'flex-end', // Align children along the main axis with space between them
       alignItems: 'center',
-      alignSelf: 'center',
-      paddingRight: 32, // Add padding to the left and right
+      justifyContent: 'space-between',
+      paddingTop: insets.top,
+      height: insets.top + 56,
+      paddingHorizontal: theme.cardMargin.left,
       backgroundColor: appConfigData?.header_color,
     },
     headerLogo: {
-      position: 'absolute',
-      justifyContent: 'center',
-      alignItems: 'center',
-      left: 8,
       flexDirection: 'row',
+      alignItems: 'center',
       gap: 12,
-      alignSelf: 'center',
     },
     otherIcon: {
       flexDirection: 'row',
@@ -60,6 +55,7 @@ const Header = () => {
     shopIcon: {
       width: 20,
       height: 20,
+      resizeMode: 'contain',
     },
     logoText: {
       color: appConfigData?.primary_color,
@@ -79,18 +75,20 @@ const Header = () => {
       backgroundColor: theme.colors.red,
       height: 15,
       width: 15,
-      borderRadius: 15 / 2,
+      borderRadius: 7.5,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    cartWrapper: {
+      position: 'relative',
     },
   });
 
   return (
     <View style={styles.container}>
       <View style={styles.headerLogo}>
-        <TouchableOpacity activeOpacity={1} onPress={() => console.log('Logo')}>
-          <Image
-            source={icons.riseCartLogo}
-            style={styles.logo}
-          />
+        <TouchableOpacity activeOpacity={1} onPress={() => {console.log('Logo')}}>
+          <Image source={icons.riseCartLogo} style={styles.logo} />
         </TouchableOpacity>
         <Text style={styles.logoText}>Rise Cart</Text>
       </View>
@@ -99,7 +97,10 @@ const Header = () => {
         <TouchableOpacity activeOpacity={1} onPress={handleNotificationIconPress}>
           {/* <Image source={icons.notificationBell} style={styles.iconSize} /> */}
         </TouchableOpacity>
-        <TouchableOpacity activeOpacity={1} onPress={handleShopIconPress}>
+        <TouchableOpacity
+          activeOpacity={1}
+          onPress={handleShopIconPress}
+          style={styles.cartWrapper}>
           <Image source={icons.shoppingCartIcon} style={styles.shopIcon} />
           {cartItems.length !== 0 && (
             <View style={styles.cartView}>
