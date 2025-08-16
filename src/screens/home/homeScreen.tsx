@@ -203,7 +203,7 @@ const HomeScreen: React.FC = () => {
         let eventTitle = `You were watching ${videoContent?.title}.`;
         let eventSubtitle = `Want to finish it?`;
         if (appState !== 'active') {
-          scheduleReminderNotification(videoContent, eventTitle, eventSubtitle);
+          scheduleReminderNotification(videoData, eventTitle, eventSubtitle);
           await StorageService.storeData(
             video_data,
             JSON.stringify({
