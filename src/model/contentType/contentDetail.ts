@@ -1,0 +1,93 @@
+export type ContentDetailResponse = {
+    data: {
+        publish_contentDetail: ContentDetail;
+    };
+};
+
+export type ContentDetail = {
+    page: string;
+    description: string;
+    title: string;
+    Thumbnail: string;
+    short_description: string;
+    short_title: string;
+    tag_name: string;
+    current_page_url: string;
+    parent_page_url: string;
+    DsapceVideoUrl: string;
+    VodVideoId: string;
+    VodAccountId: string;
+    publishedDate: string;
+    PlayerID: string;
+    PlayerType: string;
+    tags: string[];
+    page_state: string;
+    lastModificationDate: string;
+    Page_CreatedBy: string;
+    Page_LastModifiedBy: string;
+    Page_PublishedBy: string;
+    is_edit: boolean;
+    is_softdelete: boolean;
+    seo_enable: boolean;
+    analytics_enable: boolean;
+    robot_txt: boolean;
+    sitemap: boolean;
+    structure_data: string;
+    DevelopedBy: string;
+    DevelopedDate: string;
+    user_action_info: string;
+    PageSettings: PageSettings;
+    creationDate: string;
+    is_featured: boolean;
+    author: string;
+    LatestVods: LatestVod[];
+};
+
+export type PageSettings = {
+    page: string;
+    description: string;
+    page_viewer: string;
+    page_caching: string;
+    page_mobile_friendly: string;
+    seo_title: string;
+    seo_description: string;
+    seo_keywords: string[];
+    seo_blockIndexing: boolean;
+    schedule_publish_datetime: string;
+    is_schedule_unpublish: string;
+    schedule_unpublish_datetime: string;
+    is_schedule_publish: string;
+    SocialOgTitle: string;
+    SocialOgDescription: string;
+    SocialOgSiteName: string;
+    SocialOgType: string;
+    SocialOgURL: string;
+    SocialOgLocale: string;
+    SocialOgImage: string;
+    SocialOgTwitterTitle: string;
+    SocialOgTwitterDescription: string;
+    SocialOgTwitterImage: string;
+    SocialOgTwitterURL: string;
+    SocialTwitterCardSize: string;
+};
+
+export type LatestVod = {
+    Page: string;
+    title: string;
+    description?: string;
+    TagName: string;
+    thumbnail: string;
+    current_page_url: string;
+    ParentPageURL: string;
+    DsapceVideoUrl: string;
+    ShortDescription: string;
+    ShortTitle: string;
+    page_lastmodifiedby: string;
+    Page_PublishedBy: string;
+    publishedDate: string;
+    lastModifiedDate: string;
+    content_type: string;
+    category: string;
+    author: string;
+    tags: string[];
+};

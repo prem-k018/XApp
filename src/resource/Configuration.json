@@ -1,0 +1,41 @@
+{
+  "numberOfTabs": 5,
+  "showDrawer": true,
+  "splashScreenBrandingText": "Supercharging Progress",
+  "primary_color": "#3669C9",
+  "secondary_color": "#000000",
+  "primary_text_color": "#FFFFFF",
+  "secondary_text_color": "#000000",
+  "background_color": "#FFFFFF",
+  "header_color": "#FFFFFF",
+  "footer_color": "#FFFFFF",
+  "logo_image": "https://s3-alpha-sig.figma.com/img/c7dd/b2a6/c1e28aa23c2e061f2041368ef97bd046?Expires=1705276800&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=HxRn~3pDRk9RJH9rvTmrrRqpYj7qb~~bBKMUOdS9vKJnwa6-D61X7mEv4SkRXjOeOMshlvK7bLuaqZoXtvYDHeyrsjEw-Ca8UAOTq30vMTX6fzgj-gJ~V6jn3uOKni5OR2kEgCHJ0Jvld0QFc64aNGWZNtptveEkMnNlUEOH70eMUR02zHEQiljZRUQ4~nogYMuJonQKzHhxycEFu47mt5uWuPCA~iAk9TPecqzdFgxpT7wLd780Jr4gZ19fqVgXBhCqF6hzidG57NO-Mhe0VKKM6a0blvnR6ykgIm2wNqzqbYUIpZmxU4yiotzAKPkpnE85FwZbe97zDmBygu9B8Q__",
+  "splash_image": "",
+  "tabs": [
+    {
+      "tabName": "DiscoverTab",
+      "tabLabel": "Discover",
+      "isHide": false
+    },
+    {
+      "tabName": "ShopTab",
+      "tabLabel": "Shop",
+      "isHide": false
+    },
+    {
+      "tabName": "StoresTab",
+      "tabLabel": "Stores",
+      "isHide": true
+    },
+    {
+      "tabName": "OrderTab",
+      "tabLabel": "Orders",
+      "isHide": false
+    },
+    {
+      "tabName": "AccountTab",
+      "tabLabel": "Account",
+      "isHide": false
+    }
+  ]
+}

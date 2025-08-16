@@ -1,0 +1,54 @@
+{
+    "loginScreen": {
+        "emailValidation": "Voer een geldig e-mailadres in",
+        "loginError": "Onjuist e-mailadres of wachtwoord",
+        "login": "Inloggen",
+        "loginText": "Log in of meld je aan om onze app te blijven gebruiken",
+        "emailPlaceholder": "E-mail",
+        "passwordPlaceholder": "Wachtwoord",
+        "loginButtonText": "Inloggen",
+        "signupText": "Heb je nog geen account? ",
+        "signup": "Aanmelden"
+    },
+    "signupScreen": {
+        "signup": "Laten we beginnen",
+        "signupText": "Meld je aan of log in om onze app te blijven gebruiken",
+        "namePlaceholder": "Naam",
+        "emailPlaceholder": "E-mail",
+        "passwordPlaceholder": "Wachtwoord",
+        "signupButtonText": "Nu meedoen",
+        "loginText": "Heb je al een account? ",
+        "login": "Inloggen"
+    },
+    "onboardingFirstScreen": {
+        "title": "Supercharging Progress",
+        "description": "Vooruitgang. Het komt voort uit onwankelbaar voorwaarts gaan naar succes."
+    },
+    "onboardingSecondScreen": {
+        "title": "Kies de inhoud die je interesseert.",
+        "getStarted": "Beginnen",
+        "done": "Klaar"
+    },
+    "loadingScreen": {
+        "oops": "Oeps",
+        "retryButton": "Opnieuw proberen"
+    },
+    "progressScreen": {
+        "wip": "Werk in Uitvoering",
+        "buttonText": "Terug naar huis"
+    },
+    "playerCard": {
+        "title": "Team"
+    },
+    "errorMessage": {
+        "serviceFailedError": "Je hebt de digitale wildernis betreden!",
+        "workInProgressError": "Dit project is als een symfonie in wording, elke noot en penseelstreek brengt ons dichter bij perfectie.",
+        "loginFailedMsg": "Inloggen mislukt"
+    },
+    "logoutAlertMsg": { 
+        "sessionExpiredTitle": "Sessie verlopen",
+        "sessionExpiredDesc": "Uw sessie is verlopen. Log opnieuw in om door te gaan",
+        "buttonText": "Uitloggen"
+    },
+    "videoPlaybackError": "Fout bij het afspelen van video"
+}

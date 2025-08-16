@@ -1,0 +1,54 @@
+{
+    "loginScreen": {
+        "emailValidation": "Please enter valid email address",
+        "loginError": "Incorrect email or password",
+        "login": "Login",
+        "loginText": "Please login or signup to continue using our app",
+        "emailPlaceholder": "Email",
+        "passwordPlaceholder": "Password",
+        "loginButtonText": "Log in",
+        "signupText": "Don't have an account? ",
+        "signup": "Sign up"
+    },
+    "signupScreen": {
+        "signup":"Let's get started",
+        "signupText": "Please signup or login to continue using our app",
+        "namePlaceholder": "Name",
+        "emailPlaceholder": "Email",
+        "passwordPlaceholder": "Password",
+        "signupButtonText": "Join Now",
+        "loginText": "Already have an account? ",
+        "login": "Log in"
+    },
+    "onboardingFirstScreen": {
+        "title": "Supercharging Progress",
+        "description": "Progress. It comes from moving forward unwaveringly toward success."
+    },
+    "onboardingSecondScreen": {
+        "title": "Choose the content that you are interested.",
+        "getStarted": "Get Started",
+        "done": "Done"
+    },
+    "loadingScreen": {
+        "oops": "Oops",
+        "retryButton": "Retry"
+    },
+    "progressScreen": {
+        "wip": "Work in Progress",
+        "buttonText": "Back to Home"
+    },
+    "playerCard": {
+        "title": "Team"
+    },
+    "errorMessage": { 
+        "serviceFailedError": "You've wandered into the digital wilderness!",
+        "workInProgressError": "This project is like a symphony in the making, each note and brushstroke bringing us closer to perfection.",
+        "loginFailedMsg": "Login Failed"
+    },
+    "logoutAlertMsg": { 
+        "sessionExpiredTitle": "Session Expired",
+        "sessionExpiredDesc": "You session has been expired, please login again to continue",
+        "buttonText": "Logout"
+    },
+    "videoPlaybackError": "Video playback error"
+}
