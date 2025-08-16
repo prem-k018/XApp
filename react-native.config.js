@@ -5,7 +5,8 @@ module.exports = {
   },
   assets: ['./src/assets/fonts/'],
   dependencies: {
-    // Example of disabling autolinking for a platform:
-    // 'react-native-some-lib': { platforms: { android: null } }
-  }
+    ...(process.env.NO_FLIPPER
+      ? {'react-native-flipper': {platforms: {ios: null}}}
+      : {})
+  },
 };

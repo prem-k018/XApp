@@ -1,20 +1,25 @@
 module.exports = {
   presets: ['module:@react-native/babel-preset'],
   plugins: [
-    ['module-resolver', {
-      root: ['./'],
-      extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
-      alias: {
-        '@src': './src',
-        '@components': './src/components',
-        '@screens': './src/screens',
-        '@navigation': './src/navigation',
-        '@hooks': './src/hooks',
-        '@utils': './src/utils',
-        '@services': './src/services',
-        '@assets': './src/assets'
-      }
-    }],
-    'react-native-reanimated/plugin'
-  ]
+    [
+      'module-resolver',
+      {
+        root: ['./src'],
+        extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
+        alias: {
+          '@app': './src',
+          '@components': './src/components',
+          '@constants': './src/constants',
+          '@navigators': './src/navigators',
+          '@screens': './src/screens',
+          '@services': './src/services',
+          '@assets': './src/assets',
+          '@utils': './src/utils',
+          '@deeplinks': './src/deeplinks',
+          '@model': './src/model',
+          '@resource': './src/resource',
+        },
+      },
+    ],
+  ],
 };

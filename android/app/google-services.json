@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "781981768365",
+    "project_id": "xretail-a2950",
+    "storage_bucket": "xretail-a2950.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:781981768365:android:1a316b029653e124174424",
+        "android_client_info": {
+          "package_name": "com.xapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "781981768365-8oeno6fvpfb7cgm60qhupi9anf73fvtj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.HCLRetailTemplate.com",
+            "certificate_hash": "6c0d73c01cfef1fea6cba87b9760ef47d14a41b8"
+          }
+        },
+        {
+          "client_id": "104231135947894073888",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC6MPw5Y-4e725DqzwwpaqLT7PTYWsLqYk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "104231135947894073888",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
