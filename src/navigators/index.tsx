@@ -195,7 +195,7 @@ const HomeTabStack = (): JSX.Element => {
 
 const ShopTabStack = (): JSX.Element => {
   const {Navigator, Screen} = createNativeStackNavigator();
-  const tabName = GetTabName(tabNames.orderTab) ?? '';
+  const tabName = GetTabName(tabNames.shopTab) ?? '';
   const {appConfigData} = useAppContext();
 
   return (

@@ -2,6 +2,7 @@ import {
   ActivityIndicator,
   BackHandler,
   Image,
+  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
@@ -42,11 +43,17 @@ const OrderConfirmedScreen: React.FC<Props> = ({route}) => {
   const [rewardLoading, setRewardLoading] = useState<boolean>(false);
   const [rewardData, setRewardData] = useState<TransactionRewards>();
   const [isError, setIsError] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     getData({showLoader: true});
-    getTransactionRewardData(orderNumber);
   }, []);
+
+  useEffect(() => {
+    if (refreshing) {
+      getData({showLoader: !refreshing});
+    }
+  }, [refreshing]);
 
   useEffect(() => {
     const backAction = () => {
@@ -76,14 +83,21 @@ const OrderConfirmedScreen: React.FC<Props> = ({route}) => {
       ) {
         const newData = contents?.data?.publish_fetchEcomOrderDetails?.data[0];
         setData(newData);
+        getTransactionRewardData(orderNumber);
         setIsLoading(false);
       } else {
         setIsError('Something went wrong!');
         setIsLoading(false);
       }
+      if (refreshing) {
+        setRefreshing(false);
+      }
     } catch (err: any) {
       setIsError(err.message);
       setIsLoading(false);
+      if (refreshing) {
+        setRefreshing(false);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -191,14 +205,18 @@ const OrderConfirmedScreen: React.FC<Props> = ({route}) => {
     getData({showLoader: true});
   };
 
+  const onRefresh = () => {
+    setRefreshing(true);
+  };
+
   const handleGoToOrder = () => {
-    navigation?.navigate(tabNames.orderTab);
+    navigation.navigate('Home', {screen: tabNames.orderTab});
   };
 
   const styles = StyleSheet.create({
     container: {
       flexGrow: 1,
-      marginVertical: theme.cardPadding.carMargin,
+      marginVertical: 60,
       paddingBottom: theme.cardPadding.xLargeSize,
     },
     orderConfirmed: {
@@ -323,7 +341,15 @@ const OrderConfirmedScreen: React.FC<Props> = ({route}) => {
       onRetry={handleRetry}
     />
   ) : (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView
+      contentContainerStyle={styles.container}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          tintColor="gray"
+        />
+      }>
       <Text style={styles.orderConfirmed}>Order Confirmed!</Text>
       <Text style={styles.text}>Thank You. Your order has been Received. </Text>
       <View style={{gap: theme.cardPadding.mediumSize}}>
